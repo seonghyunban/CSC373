@@ -1,0 +1,42 @@
+\section*{Q1}
+
+Let $n' = n/2 = 2^{k-1}$,
+and $h_{ij} = \text{ith row} \land \text{jth column entry of } H_{k-1}$.
+Let the first $n'$ entry of v as $v_1$ and the later $n'$ entries as $v_2$.
+Then,
+
+\begin{equation}
+        H_{k}v = \begin{bmatrix}
+            \sum_{i=1}^{n'} h_{1i}v_i + \sum_{i=1}^{n'} h_{1i} v_{i+n'} \\
+            \sum_{i=1}^{n'} h_{2i}v_i + \sum_{i=1}^{n'} h_{2i} v_{i+n'} \\
+            \vdots \\
+            \sum_{i=1}^{n'} h_{n'i}v_i + \sum_{i=1}^{n'} h_{n'i} v_{i+n'} \\
+            \sum_{i=1}^{n'} h_{1i}v_i - \sum_{i=1}^{n'} h_{1i} v_{i+n'} \\
+            \sum_{i=1}^{n'} h_{2i}v_i - \sum_{i=1}^{n'} h_{2i} v_{i+n'} \\
+            \vdots \\
+            \sum_{i=1}^{n'} h_{n'i}v_i - \sum_{i=1}^{n'} h_{n'i} v_{i+n'}
+        \end{bmatrix}\\
+        = \begin{bmatrix}
+            H_{k-1}v_1\\
+            H_{k-1}v_1
+        \end{bmatrix} + \begin{bmatrix}
+            H_{k-1}v_2\\
+            -H_{k-1}v_2
+        \end{bmatrix}
+\end{equation}
+
+We claim that the following algorithm, which uses the above equation, calculates the desired matrix-vector productruns in $\theta(n\log n)$ operations.
+
+We first recursively compute $H_{k-1}v_1$ and $H_{k-1}v_2$ (which are of size $n' = n/2$).
+
+Extending $H_{k-1}v_1$ by adding itself to create $\begin{bmatrix}
+    H_{k-1}v_1\\
+    H_{k-1}v_1
+\end{bmatrix}$ takes constant operation.
+
+Extending $H_{k-1}v_2$ by adding itself multiplied by $-1$ to create $\begin{bmatrix}
+    H_{k-1}v_2\\
+    -H_{k-1}v_2
+\end{bmatrix}$ takes $\theta(n/2) \in \theta(n)$ operation.
+Thus, the total time complexity of this algoruthm is given by recurrence relation $T(n) = 2T(n/2) + \theta(n)$, which solves to $\theta(n\log n)$ by master theorem.
+

@@ -1,0 +1,107 @@
+\section*{Q3}
+
+\begin{algorithm}[H]
+\caption{3 Split Huffman Encoding}  
+\begin{algorithmic}[1]
+\vspace{1em}
+
+\Function{Huffman}{$S$} \Comment{F is the prioroty queue of (frequency, letter) where frequency is key}
+
+    \vspace{1em}
+    \If {size of $S \leq 3$} \Comment{Base case returns correct encoding when size $\leq$ 3}
+        \State \Return a single node tree if $|S| = 1$.
+        \State \Return a tree with two leaves if $|S| = 2$.
+        \State \Return a tree with three leaves if $|S| = 3$.
+    \EndIf
+
+    \vspace{1em}
+
+    \vspace{1em}
+    \State If the size of $S$ is even pad $S$ with a dummy character with frequency = 0.
+
+    \vspace{1em}
+
+    \State $x, y, z \gets $ three smallest frequency elements in $S$.
+    \State Let $w := 'xyz'$ 
+    \State Let $f_w := f_x + f_y + f_z$
+    \State Push $(f_w, w)$ to $S$ \Comment{Create input with smaller size for recursive call}
+    \State $H \gets \textbf{Huffman}(S)$.
+
+    \vspace{1em}
+    \State Find the node $w^*$ in $H$ that corresponds to $w$.
+    \State \textbf{Add} branches as children of $w^*$ . \Comment{This assigns encoding to branches.}
+    \State \Return $H$
+
+    \vspace{1em}
+    \EndFunction
+
+\vspace{1em}
+\end{algorithmic}
+\end{algorithm}
+
+\subsection*{Time Complexity}
+The base case takes $O(1)$ time.
+For the recursive  case, popping the three or two smallest elements takes $O(\log n)$ time.
+All operations before the recursive call take $O(1)$ time, 
+and all operations after the recursive call take $O(1)$ time 
+(e.g., the tree is implemented using direct access table).
+Since branching by factor of 3 will reduce the time complexity more than by branching factor of 2, 
+The time complexity of this algorithm is given by the recurrence relation $T(n) \leq T(n - 1) + O(\log n)$ = recurrence relation of original Huffman algorithm.
+From lecture, original Huffman algorithm takes $O(n\log n)$, thus, $T(n) \in O(n \log n)$.
+
+
+\subsection*{Correctness}
+
+\textbf{(Lemma 1)} In an optimal ternary tree that is not a single node tree, every node other than the root must have a sibling, because if otherwise, 
+replacing the parent of a single child with its child gives tree with lower total length, contradicting that the original tree was optimal. 
+
+\textbf{(Lemma 2)}
+The optimal ternary tree $T$ is a full ternary tree if it has odd number of leaves $\geq 3$. Suppose for contradiction that it is not. 
+Then there is at least one node that has binary branching, let $v$ be the deepest such node.
+If $v$ is not a parent of two leaves, 
+by moving a non-child leaf of the subtree rooted at $v$ 
+as the child of $v$
+we can find a tree with lower loss than $T$.
+If $v$ is a parent of two leaves, there are two cases. 
+If there is another binary branching at node $u$, 
+moving a child of $v$ as a child of $u$ and replacing $v$ with its remaining child 
+makes a lower cost tree.
+If there no other binary branching, then the tree cannot have odd number of leaves, 
+since for each node from $v$ to root, it give rise to $3^k_1 + 3^k_2$ leaves for some $k_1, k_2$, and this number must be even.
+
+
+\textbf{(Lemma 3)} In optimal ternary tree, the  three lowest freqeuncy nodes $x, y, z$ (in this order) must be the three deepest node (in that order).
+Suppose for contradiction that it is not. Let $p \in {x, y, z}$ then there exists at least one $q$ such that $q$ is more frequent than $p$ but located deeper than $p$.
+swapping $p$ and $q$ leads to a tree with lower total length, which is a contradiction.\\
+
+
+\textbf{Proof.}\\
+
+As the base case, when the size of $|S| \leq 3$ the algorithm outputs optimal tree.
+
+In any other cases the algorithm ensure that $|S|$ is odd at line 7.
+
+Assume as IH that algotithm outputs optimal tree when size of input is less than $k \in \NN^{\geq 3}$.
+
+Let $S$ be an input of size $k$. 
+Let $H$ be the output of the algorithm given $S$.
+Let $S'$ be the $S$ after operations at line 8 to 11.
+Then the recursive call at line 12 returns the optimal tree, $H'$ over $S'$ by IH.
+
+Let $f_w$ be the sum of frequencies of $x, y, z$.
+We know that total loss of S, $loss(H) = f_w + loss(H')$ 
+(using the same reasoning as KT p.174 but using three frequencies instead of two).
+
+Suppose for contradiction $H$ is not optimal.
+Then there exists an optimal tree $T$ over $S$, and thus $loss(H) > loss(T)$.
+Because $T$ is optimal, the three lowest frequency nodes appear as siblings at the deepest level of T.
+(by lemma 2 and 3).
+Let $T'$ be a tree after removing the three lowest frequency nodes from T. 
+Similarly as above, $T'$ is a optimal tree over $S'$ and we can show that 
+$loss(T) = f_w + loss(T')$ by using the same reasoning as above.
+
+By IH, $loss(H') \leq loss(T')$. However, then $loss(H) = f_w + loss(H') \leq f_w + loss(T') = loss(T)$, which is a contradiction. \qed
+
+
+
+

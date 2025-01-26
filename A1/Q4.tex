@@ -1,0 +1,118 @@
+\section*{Q4}
+
+
+\begin{algorithm}[H]
+    \caption{Maximize Profit}  
+    \begin{algorithmic}[1]
+    \vspace{1em}
+    
+    \Function{MaximizeProfit}{$E$} \Comment{E is the prioroty queue of ($g_i$, $t_i$) where $t_i$ is the key}
+        
+        \vspace{1em}
+
+        \State $schedule \gets [ ]$; $time \gets 0$
+        \vspace{1em}
+
+        \While {$E$ is not empty}
+            \State $Q \gets \text{Max-Heap}$ of ($g_i$, $t_i$) where the key is $g_i$
+            \State $(g_i, t_i) \gets \textbf{Dequeue}(E)$
+
+            \vspace{1em}
+            \While {E is not empty and $time \leq t_i < time + 1$}
+                \State \textbf{Enqueue} ($g_i$, $t_i$) to $Q$ and update ($g_i$, $t_i$) with the output of \textbf{Dequeue}(E)
+            \EndWhile
+            
+            \vspace{1em}
+            \State \textbf{If} $t_i$ of the last tuple is within $[time, time + 1)$ \textbf{Enqueue} ($g_i$, $t_i$) to $Q$
+            \State \textbf{Else} \textbf{Enqueue} ($g_i$, $t_i$) to $E$ \Comment {enque the tuple back to $E$ if it is out of the range}
+
+            \vspace{1em}
+            \State \textbf{If} $Q$ is not empty \textbf{Add Max}(Q) to $schedule$
+
+            \State $time \gets time + 1$
+        \vspace{1em}
+        \EndWhile
+        
+
+        \vspace{1em}
+        \State \Return $schedule$ 
+        \EndFunction
+    
+    \vspace{1em}
+    \end{algorithmic}
+    \end{algorithm}
+    
+
+    \subsection*{Time Complexity}
+
+    If we had to build priority queue, this takes $O(n)$ time.
+    Every operation other than enqueing or dequeueing takes constant time.
+    
+    Let $j_i$ be the number of iterations of inner while loop at $i$th iteration of the outer while loop.
+    At least $j_i$ number of tuples are removed from $E$ at $i$th iteration.
+    Suppose that the outer loop iterates $k$ times in total. 
+    Then the outer while loop stops when $\sum_{i=1}^{k} j_i = n$. 
+    The total number of enqueing and dequeing at ith iteration is $2 + 2j_i$. 
+    Thus, total number of enqueing and dequeing of the algorithm is $\sum_{i=1}^{k} 2 + 2j_i = 2k + 2n$.
+    
+    $k$ can exceed $n$ iff inner loop does not iterate for many iteration of the outer loop. 
+    However, because the time gets incremented at each iteration of the outer loop, $2k + 2n \in O(max(max(t_i)_{i=1}^n, n))$.
+    Let $m = max(max(t_i)_{i=1}^n, n)$, then the algorithm takes $O(m \log n)$ time.
+
+
+    \subsection*{Correctness}
+
+    We define optimality as maximizing the sum of profit.
+
+    For each $t \in \NN$, define $P(t)$ as:
+    at the end of $t$th iteration of the puter loop, 
+    the algorithm have the optimal solution ($schedule$) 
+    among all the events $i$ where $t_i \in [0, t)$
+
+    For the base case $t = 0$, the empty array $schedule$ is the optimal solution in $[0, 0)$.
+
+    Let $t \in \NN^+$ and assume $P(t - 1)$ holds. 
+    By IH, $schedule$ is the optimal solution in the time interval $[0, t-1)$.
+
+    Since $time$ increases by 1 at the end of every iteration of the outer loop, 
+    $time = t - 1$ during the $t$th iteration of the outer loop.
+    If $E$ is empty at the begining of $t$th iteration of the outer loop, 
+    then the function returns, and all the events have critical time within the range $[0, t-1)$. 
+    Thus the algorithm outputs the optimal solution within $[0, t)$.
+
+    Suppose that $E$ is not empty and the outer loop is executed
+    \begin{enumerate}[label=]
+        \item (Case 1) $E$ becomes empty before the inner loop gets executed.
+        \begin{itemize}[label=]
+            \item If $t_i \in [t-1, t)$, then the last item in $E$ is added to schedule, 
+            and result in schedule with maximum benefit 
+            among all the events with critical time within $[0, t)$.
+            \item If $t_i \notin [t-1, t)$ then it is trivial to show $P(t)$.
+        \end{itemize}
+        \item (Case 2) $E$ is non-empty right before the inner loop, but loop does not iterate.
+        \begin{itemize}[label=]
+            \item Then the only event $(g_i, t_i)$ dequeued at line 5 is not added to schedule since $t_i \notin [0, t)$ and iteration ends.
+            Note that $t_i$ cannot be less than $t - 1$ because in that case it would have dequeued in the previous iteration.
+            All the events following it will have critical value of at least $t_i$, and hence will not be in $[0, t)$. 
+            Thus all the events in $[0, t)$ is equivalent to all the events in $[0, t-1)$, and schedule has optimal solution
+            among all the tasks whose critical time is within $[0, t)$.
+        \end{itemize}
+        \item (Case 2) If $E$ is non empty and the inner loop iterates at least once.
+        \begin{itemize}[label=]
+            \item Then the inner loop adds all the events to $Q$ if their critical time is within $[0, t)$.
+            Because every event takes one unit of time and we can do only one task in $Q$, choosing the event with
+            maximum profit gives the optimal solution among all the tasks in the interval $[0, t)$.
+        \end{itemize}
+    \end{enumerate}
+
+Thus in any case, at the end of $t$th iteration, the algorithm have the optimal solution ($schedule$) 
+among all the events $i$ where $t_i \in [0, t)$
+
+Let $t_{max} = \lceil max_{i = 1}^n t_i \rceil + 1$ then by $P(t_{max})$, the algorithm outputs the optimal solution 
+    among all the events in $E$.
+
+
+
+
+
+
