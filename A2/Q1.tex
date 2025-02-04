@@ -1,1 +1,97 @@
-\section*{Q1}
+
+\subsection*{(a)}
+Define a 2D array $OPT(i,j)$ for $1 \le i \le j \le n$. In words:
+\[
+OPT(i,j) = 
+\text{the maximum total chord length using only the points }
+\{i, i+1, \dots, j\} \text{, with no two chords intersecting.}
+\]
+
+
+
+\subsection*{(b)}
+
+\begin{equation}
+    \begin{split}
+        \B{OPT}(i, j) = \begin{cases}
+                        0 & \dots \text{if } i \geq j \\
+                        L[i, j] & \dots \text{if } i = j - 1\\
+                    \max(\substack{\B{OPT}(i + 1, j), \\
+                                   L[i, j] + \B{OPT}(i + 1, j - 1), \\
+                                   \max\limits_{k \in \{i + 1, ... j - 1\}} L[i,k] + \B{OPT}(i + 1, k - 1) + \B{OPT}(k + 1, j)}) & \dots \text{if } i < j - 1
+                    \end{cases}
+    \end{split}
+\end{equation}
+
+
+We want to show that the bellman equation covers all possible cases when computing optimal length from points $i$ to $j$.
+
+The constraint $i \leq j$ gives us two base case.
+\begin{itemize}
+    \item If $i = j$, there are fewer than two points in $[i,j]$, so no chord can be formed. Thus, $OPT(i,j) = 0 = L[i,j]$.
+    \item If $i = j - 1$, exactly two points exist; the only chord is $(i,j)$, so $OPT(i,j) = L[i,j]$.
+\end{itemize}
+
+Remaining cases are $i < j - 1$.
+Since there is at least one point strictly between $i$ and $j$, we consider all ways to form chords involving $i$ (or skip $i$ altogether):
+
+\begin{itemize}
+    \item \textbf{Skip $i$:}  
+    No chord is drawn from $i$; we only use points $\{i+1, \dots, j\}$.  
+    i.e., $OPT(i+1, j)$.
+
+    \item \textbf{Connect $i$ with $j$:}  
+    We add the chord $(i,j)$ of length $L[i,j]$ plus the optimal arrangement of the interval $[i+1, j-1]$, i.e.\ $OPT(i+1, j-1)$.
+
+    \item \textbf{Connect $i$ with a point $k$ ($i < k < j$):}  
+    The chord $(i,k)$ has length $L[i,k]$. Due to non-intersecting constraints, the interval splits into two independent subproblems $[i+1, k-1]$ and $[k+1, j]$, leading to a total of $L[i,k] \;+\; OPT(i+1, k-1) \;+\; OPT(k+1, j)$
+\end{itemize}
+
+There are no other cases, and Bellman equation computes the optimal length in any case.
+
+
+\subsection*{(c)}
+
+We implement a bottom-up dynamic programming approach.
+\begin{verbatim}
+C = []
+for j in 1..n:
+    for i in j..1:
+        C[i,j] = OPT(i,j) as defined above
+\end{verbatim}
+We ensure $OPT(i', j')$ for $i' > i$ and $j' < j$ is already computed.
+
+\subsection*{(d)}
+
+\paragraph{Space Complexity:}
+We store a table $OPT(i,j)$ for $1 \le i \le j \le n$. This is on the order of $\frac{n(n+1)}{2}$ entries, i.e.\ $O(n^2)$.
+
+\paragraph{Time Complexity:}
+We fill each entry $OPT(i,j)$ once. In the worst case, we do a loop over all $k$ from $i+1$ to $j-1$, which is $O(n)$ work per state. Since there are $O(n^2)$ states, the total time is $O(n^3)$. We assume $L[i,j]$ is retrievable in $O(1)$ time.
+
+\subsection*{(e)}
+
+
+Create an additional 2d array S, where $S[i,j]$ = optimal solution using points $[i, ... ,j]$.
+
+Define, \\
+$P_{ij} = C[i + 1, j]$,\\ 
+$J_{ij} = L[i,j] + C[i+1, j-1]$, and \\
+$K_{ij} =  \max\limits_{k \in \{i + 1, ... j - 1\}} L[i,k] + C[i + 1, k - 1] + C[k + 1, j]$\\
+
+Right after calculating $OPT(i,j)$, compute $S[i,j]$ as follows. (Assumed that at every inner iteration, the inner point k that maximizes the expression in the bellman equation is accessible.)
+
+\begin{equation}
+    \begin{split}
+        \B{S}[i, j] = \begin{cases}
+                        \varnothing & \dots \text{if } i \geq j\\
+                        \{(i,j)\} & \dots \text{if } i = j - 1\\
+                        S[i+1,j] & \dots \text{if } \max (P_{ij}, J_{ij}, K_{ij}) = P_{ij} \\
+                        \{(i,j)\} \cup S[i+1, j-1] & \dots \text{if } \max (P_{ij}, J_{ij}, K_{ij}) = J_{ij} \\
+                        \{(i,k)\} \cup S[i+1, k-1] \cup S[k+1, j] & \dots \text{if } \max (P_{ij}, J_{ij}, K_{ij}) = K_{ij}
+                    \end{cases}
+    \end{split}
+\end{equation}
+
+
+The final solution should be $S[1, n]$
