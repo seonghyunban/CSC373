@@ -1,1 +1,102 @@
 \section*{Q2}
+
+\subsection*{(a)}
+Let $\B{OPT}(i,j)$ refer to the minimum cost of any alignment of $D[i]$ with $D[j]$
+
+\subsection*{(b)}
+
+Let $\B{COST}(a, b)$ refer to the cost of comparing characters $a$ and $b$. This returns $1$ if they are equal and $0$ if they are different. This is symmetric.
+
+\begin{equation}
+    \begin{split}
+        \B{OPT}(i, j) = \begin{cases}
+            0 & \dots \text{if } i = 0 \wedge j = 0 \\
+            j & \dots \text{if } i = 0 \wedge j \neq 0\\
+            i & \dots \text{if } j = 0 \wedge i \neq 0 \\
+            \min\left(
+            \begin{array}{l}
+                \B{OPT}(i-1,j) + 1, \\
+                \B{OPT}(i,j-1) + 1, \\
+                \B{OPT}(i-1,j-1) + \B{COST}(D_1[i], D_2[j])
+            \end{array}
+            \right) & \dots \text{otherwise}
+        \end{cases}
+    \end{split}
+\end{equation}
+
+For initial conditions, we have base cases:
+\begin{itemize}
+    \item If $i = 0 \wedge j = 0$, then both strings are empty and both strings are identical, so any alignment has two identical strings which have 0 cost.
+    \item If $i=0$, then $D_1[1 \dots i]$ is an empty string and $D_2[1 \dots j]$ is non empty. We align $D_1[1 \dots i]$ to match $D_2[1 \dots j]$ by inserting spaces, but $D_2[j] \in \{'a', 'c', 't', 'g'\}$. So all characters in $D_2[1 \dots j]$ mismatch and this is true for any alignment, so the minimum cost is the length of $D_2[j]$, $j$.
+    \item If $j=0$, then $D_2[j]$ is an empty string and $D_1[j]$ is non empty. The same argument made for $i=0$ applies here.
+\end{itemize}
+
+For the last case, there are three sub cases to consider:
+Suppose 
+\begin{enumerate}
+    \item Add space for $D_1$\\
+    Let $A$ and $B$ be any alignment corresponding to $\B{OPT}(i,j-1)$. We can generate a new alignment for $D_1[i]$ and $D_2[j]$ by appending $D_2[j] \in \{'a', 'c', 't', 'g'\}$ to $B$ and a space to $A$. They are necessarily different, so this adds a cost of 1.
+    \item Add space for $D_2$\\
+    Let $A$ and $B$ be any alignment corresponding to $\B{OPT}(i-1,j)$. We can generate a new alignment for $D_1[i]$ and $D_2[j]$ by appending $D_1[i] \in \{'a', 'c', 't', 'g'\}$ to $A$ and a space to $B$. They are necessarily different, so this adds a cost of 1.
+    \item Accept a match or mismatch\\
+    Let $A$ and $B$ be any alignment corresponding to $\B{OPT}(i-1,j)$. We can generate a new alignment for $D_1[i]$ and $D_2[j]$ by appending $D_1[i]$ to $A$ and appending $D_2[j]$ to B. The additional cost is $0$ if they match or $1$ if they mismatch.
+\end{enumerate}
+
+\subsection*{(c)}
+We try a bottom up approach.
+
+\begin{verbatim}
+C = []
+for i in 1..n:
+    for j in j..1:
+        C[i,j] = OPT(i,j)
+\end{verbatim}
+
+This guarantees that $\B{OPT}(i-1,j)$, $\B{OPT}(i,j-1)$ and $\B{OPT}(i-1,j-1)$ have all been computed before calculating $\B{OPT}(i,j)$
+
+\subsection*{(d)}
+\paragraph{Space Complexity:}
+We need to store a cache table of size $n_1+1 by n_2+1$, which would be $O(n_1n_2)$. Notice that we only need $\B{OPT}(i-1,j)$, $\B{OPT}(i,j-1)$ and $\B{OPT}(i-1,j-1)$, so we can ignore all columns before $i-1$, so the actual space requirement is closer to $O(min(n_1,n_2)$ If you swap the two so that the number of columns is smaller than the number of rows.
+
+\paragraph{Time Complexity:}
+For each slot in our cache grid, calculating the optimal value only requires considering a constant amount of work. Since there are $O(n_1n_2)$ entries, the running time is $O(n_1n_2)$.
+
+\subsection*{(e)}
+
+\begin{verbatim}
+# Initial conditions for backwards trace
+S_1 = []
+S_2 = []
+i = n_1
+j = n_2
+
+# Function for the cost function stated above
+def Cost(a,b):
+    if a == b:
+        return 1
+    else:
+        return 0
+
+while true:
+    if i > 0 and j > 0 and C[i][j] == C[i-1][j-1] + Cost(D_1[i-1],D_2[j-1]):
+        # Safely check if we chose OPT(i-1,j-1)
+        S_1 += D_1[i-1]
+        S_2 += D_2[i-1]
+        i -= 1
+        j -= 1
+    elif i > 0 and C[i][j] == C[i-1][j]:
+        # Safely check if we chose OPT(i-1,j)
+        S_1 += D_1[i-1]
+        S_2 += " "
+    elif j > 0 and C[i][j] == C[i][j-1]:
+        # Safely check if we chose OPT(i,j-1)
+        S_1 += " "
+        S_2 += D_2[j-1]
+    elif i == 0 and j == 0:
+        # We've fully traversed back
+        break
+
+# Since we built the strings backwards, we need to reverse them.
+S_1.reverse()
+S_2.reverse()
+\end{verbatim}
