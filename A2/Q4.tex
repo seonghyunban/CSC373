@@ -1,2 +1,42 @@
 \section*{Q4}
 
+\subsection*{(a)}
+Let $a,b$ be nodes such that $e = (a,b)$ and $e' = (b,a)$. let $A$ be the min cut and $B = V \setminus A$
+
+We assume the FF algorithm runs, terminates and finds the max-flow/min-cut
+
+WTS $\text{FF finds max flow} \implies f(e) = 0 \vee f(e') = 0$
+
+Consider $A$ and $B$ as a residual graph of some graph. By the claim proven in lectures:
+
+All edges leaving $A*$ are saturated and all edges entering $A*$ have zero flow
+
+\textbf{Case 1 ($a \in A, b \in B$):}
+
+From the claim, we know that $f(e') = 0$
+
+\textbf{Case 2 ($a,b \in A$):}
+
+Both nodes are in $A$ and since from the claim, $A$ is maximizing its outgoing flow to $B$, either:
+\begin{enumerate}
+    \item The max flow takes another path and $f(e)=f(e')=0$
+    \item The max flow requires $f(e) <= C(e)$ to be maximized. Here, sending flow through $e'$ is equivalent to reducing flow on $e$. Since we want to maximize $f(e)$, then $f(e')=0$.
+\end{enumerate}
+
+\textbf{Case 3 ($a,b \in B$):}
+
+Both nodes are in $B$ and since from the claim, $B$ is minimizing its outgoing flow to $A$, either:
+\begin{enumerate}
+    \item All other outgoing edges already have zero flow through another path
+    \item Minimizing the outgoing flow requires $f(e')>=0$ to be minimized. So $f(e')=0$
+\end{enumerate}
+
+In all cases, either $f(e)=0$ or $f(e')=0$
+
+\subsection*{(b)}
+The algorithm works as follows:
+Create a new graph $G'$ which sets each edge of $G$ to 1.
+
+Run the FF algorithm to find the max flow and its corresponding min cut, $A$
+
+The FF algorithm finds the minimum capacity cut who's capacity is equal to its flow ($Cap(A) = v(f)$). So each unit of flow represents a unique edge crossing the min cut, since all edge weights are 1. Removing these edges disconnects the two cuts, and since this is the minimum capacity cut that achieves this, we know this is the minimum number of edges to be removed from $G'$ so that no flow passes through from $s$ to $t$, or equivalently, there is no path from $s$ to $t$ in $G$.
