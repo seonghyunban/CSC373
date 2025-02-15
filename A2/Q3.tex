@@ -1,1 +1,90 @@
 \section*{Q3}
+
+
+\begin{center}
+\begin{tikzpicture}[
+  vertex/.style = {shape=circle,draw,minimum size=2.5em},
+  edge/.style = {->,-Latex, thick},
+  ]
+
+\node[vertex] (s) at (0,0) {$s$};
+
+\node[vertex] (u1) at (3,3) {$u_1$};
+\node (udots1) at (3,1.5) {\vdots};
+\node[vertex] (uk) at (3,0) {$u_k$};
+\node (udots2) at (3,-1.5) {\vdots};
+\node[vertex] (up) at (3,-3) {$u_p$};
+
+\node[vertex] (w1) at (7,3) {$w_1$};
+\node (wdots1) at (7,1.5) {\vdots};
+\node[vertex] (wl) at (7,0) {$w_l$};
+\node (wdots2) at (7,-1.5) {\vdots};
+\node[vertex] (wq) at (7,-3) {$w_q$};
+
+\node[vertex] (t) at (10,0) {$t$};
+
+\draw[edge] (s) -- (u1) node[midway, above, sloped] {$m_1$};
+\draw[edge] (s) -- (uk) node[midway, above, sloped] {$m_k$};
+\draw[edge] (s) -- (up) node[midway, above, sloped] {$m_p$};
+
+\foreach \u in {u1, uk, up} {
+    \foreach \w in {w1, wl, wq} {
+        \draw[edge] (\u) -- (\w) node[pos=0.1, above, sloped, font=\tiny] {$1$};
+    }
+}
+
+\draw[edge] (w1) -- (t) node[midway, above, sloped] {$n_1$};
+\draw[edge] (wl) -- (t) node[midway, above, sloped] {$n_l$};
+\draw[edge] (wq) -- (t) node[midway, above, sloped] {$n_p$};
+
+% Cut A
+\begin{scope}[on background layer]
+\draw[thick, dashed, blue, rounded corners=8pt, fill=cyan!20, opacity=0.4]
+  ($(s) + (-0.6,-0.6)$) -- ($(s) + (-0.6, 0.6)$) 
+  -- ($(u1) + (-0.6, 0.6)$) -- ($(w1) + (0.6, 0.6)$) 
+  -- ($(wl) + (0.6,-0.6)$) -- ($(uk) + (-0.6,-0.6)$) 
+  -- cycle;
+\end{scope}
+
+\node[anchor=south east] at ($(s) + (-0.5,1.5)$) {\textbf{Cut A}};
+
+% Cut B
+\begin{scope}[on background layer]
+\draw[thick, dashed, red, rounded corners=8pt, fill=yellow!20, opacity=0.4]
+  ($(up) + (-0.6,-0.6)$) -- ($(udots2) + (-0.6, 0.6)$) % edge around up
+  -- ($(wdots2) + (0.6, 0.6)$) -- ($(t) + (-0.6, 0.6)$)
+  -- ($(t) + (0.6,0.6)$)
+  -- ($(t) + (0.6,-0.6)$) -- ($(wq) + (0.6,-0.6)$) 
+  -- ($(up) + (0.6,-0.6)$) 
+  -- cycle;
+\end{scope}
+
+\node[anchor=south east] at ($(t) + (1.5,-1.5)$) {\textbf{Cut B}};
+
+\end{tikzpicture}
+\end{center}
+
+
+\subsection*{(a)}
+
+Consider this flow network, where $u$ nodes represent universities and $w$ nodes represent workshops.
+
+The source can send to a university, all its students $m_i$. Since the capacity between each university and workshop node is $1$, only one university from each university can go to a given workshop. Since the capacities from the workshops to the sink is the workshop's capacities $n_j$, that puts a limit on how many students can enter a given workshop. Finding the maximum flow of this graph tells us the optimal dispatching of participants into workshops, satisfying these constraints.
+
+\subsection*{(b)}
+
+Let cut $A$ and $B = V \setminus A$ be defined as follows:
+\begin{enumerate}
+    \item $A = \{s, u_1, \dots, u_k, w_1, \dots, w_l\}$
+    \item $B = \{t, u_{k+1}, \dots, u_p, w_{l+1}, \dots, w_q\}$
+\end{enumerate}
+
+WTS
+
+$\exists$ a valid satisfying dispatching $\iff$ $\forall k \in {0, \dots, p}, \forall l \in {0, \dots, q}, k(q-l) + \sum_{j=1}^{l} n_k \geq \sum_{i=1}^{k} m_i$.
+
+We will prove this in both directions.
+
+
+
+\subsubsection*{(Backward $\impliedby$)}
