@@ -90,6 +90,12 @@ The capacity of cut A is the flow leaving it (purple arrows in diagram). This gi
 
 $cap(A,B) = k(q-l) + \sum_{j=1}^{l}n_j + \sum_{i=k+1}^{p} m_i$
 
+\begin{enumerate}
+    \item $\sum_{i=k+1}^{p} m_i$ represents the edges from the source to universities in $A$
+    \item $\sum_{j=1}^{l}n_j$ represents the edges from workshops in $B$ to the sink
+    \item $k(q-l)$ represents the edges from univerisites in $A$ to workshops in $B$
+\end{enumerate}
+
 WTS $\exists$ a valid dispatching $\iff$ $\forall k \in \{0, \dots, p\}, \forall l \in \{0, \dots, q\}, k(q-l) + \sum_{j=1}^{l} n_k \geq \sum_{i=1}^{k} m_i$.
 
 \subsubsection*{Forward Proof ($\implies$):}
@@ -106,12 +112,16 @@ $k(q-l) + \sum_{j=1}^{l}n_j + \sum_{i=k+1}^{p} m_i \geq \sum_{i=1}^{k} m_i + \su
 $k(q-l) + \sum_{j=1}^{l}n_j +\geq \sum_{i=1}^{k} m_i$
 
 \subsubsection*{Backward Proof ($\impliedby$):}
+In the previous part, we showed that $\exists \text{flow} f, \iff \text{valid assignment}$
+
 Assume $\forall k \in \{0, \dots, p\}, \forall l \in \{0, \dots, q\}, k(q-l) + \sum_{j=1}^{l} n_k \geq \sum_{i=1}^{k} m_i$
 
 From the same steps in the previous problem done backwards, we have:
+
+By varying $k$ and $l$, all cuts $A$ and $B$ in flow network $G$ can be created.
 
 $\forall k \in \{0, \dots, p\}, \forall l \in \{0, \dots, q\}, cap(A,B) \geq v(f) = \sum_{i=1}^{p} m_i$
 
 Since every cut has $cap(A,B) \geq \sum_{i=1}^{p} m_i$, we know the minimum capacity cut also has this property.
 
-Thus, every student can be sent and all constraints are satisfied.
+Therefore, there $\exists \text{flow} f | v(f) = \sum_{i=1}^{p} m_i$. Run the FF algorithm on the flow network defined in part A, then we get a valid dispatching.
