@@ -7,6 +7,7 @@
   edge/.style = {->,-Latex, thick},
   ]
 
+% Setup nodes
 \node[vertex] (s) at (0,0) {$s$};
 
 \node[vertex] (u1) at (3,3) {$u_1$};
@@ -23,9 +24,10 @@
 
 \node[vertex] (t) at (10,0) {$t$};
 
+% From source to universities
 \draw[edge] (s) -- (u1) node[midway, above, sloped] {$m_1$};
 \draw[edge] (s) -- (uk) node[midway, above, sloped] {$m_k$};
-\draw[edge] (s) -- (up) node[midway, above, sloped] {$m_p$};
+\draw[edge, color=magenta] (s) -- (up) node[midway, above, sloped] {$m_p$};
 
 \foreach \u in {u1, uk, up} {
     \foreach \w in {w1, wl, wq} {
@@ -33,8 +35,13 @@
     }
 }
 
-\draw[edge] (w1) -- (t) node[midway, above, sloped] {$n_1$};
-\draw[edge] (wl) -- (t) node[midway, above, sloped] {$n_l$};
+% Override color
+\draw[edge, color=magenta] (u1) -- (wq) node[pos=0.1, above, sloped, font=\tiny] {$1$};
+\draw[edge, color=magenta] (uk) -- (wq) node[pos=0.1, above, sloped, font=\tiny] {$1$};
+
+% From workshops to sink
+\draw[edge, color=magenta] (w1) -- (t) node[midway, above, sloped] {$n_1$};
+\draw[edge, color=magenta] (wl) -- (t) node[midway, above, sloped] {$n_l$};
 \draw[edge] (wq) -- (t) node[midway, above, sloped] {$n_p$};
 
 % Cut A
@@ -73,18 +80,38 @@ The source can send to a university, all its students $m_i$. Since the capacity 
 
 \subsection*{(b)}
 
-Let cut $A$ and $B = V \setminus A$ be defined as follows:
+Let cut $A$ and $B = V \setminus A$ be an arbitrary cut defined by $k$ and $l$:
 \begin{enumerate}
     \item $A = \{s, u_1, \dots, u_k, w_1, \dots, w_l\}$
     \item $B = \{t, u_{k+1}, \dots, u_p, w_{l+1}, \dots, w_q\}$
 \end{enumerate}
 
-WTS
+The capacity of cut A is the flow leaving it (purple arrows in diagram). This gives:
 
-$\exists$ a valid satisfying dispatching $\iff$ $\forall k \in {0, \dots, p}, \forall l \in {0, \dots, q}, k(q-l) + \sum_{j=1}^{l} n_k \geq \sum_{i=1}^{k} m_i$.
+$cap(A,B) = k(q-l) + \sum_{j=1}^{l}n_j + \sum_{i=k+1}^{p} m_i$
 
-We will prove this in both directions.
+WTS $\exists$ a valid dispatching $\iff$ $\forall k \in \{0, \dots, p\}, \forall l \in \{0, \dots, q\}, k(q-l) + \sum_{j=1}^{l} n_k \geq \sum_{i=1}^{k} m_i$.
 
+\subsubsection*{Forward Proof ($\implies$):}
+Assume we have a valid dispatching of students satisfying the constraints.
 
+We know the minimum capacity cut must have a flow of at least the number of students we need to send. If a single cut had less capacity than the flow, it would violate our assumption. So for all possible cuts:
 
-\subsubsection*{(Backward $\impliedby$)}
+$cap(A,B) \geq v(f) = \sum_{i=1}^{p} m_i$
+
+$k(q-l) + \sum_{j=1}^{l}n_j + \sum_{i=k+1}^{p} m_i \geq \sum_{i=1}^{p} m_i$
+
+$k(q-l) + \sum_{j=1}^{l}n_j + \sum_{i=k+1}^{p} m_i \geq \sum_{i=1}^{k} m_i + \sum_{i=k+1}^{p} m_i$
+
+$k(q-l) + \sum_{j=1}^{l}n_j +\geq \sum_{i=1}^{k} m_i$
+
+\subsubsection*{Backward Proof ($\impliedby$):}
+Assume $\forall k \in \{0, \dots, p\}, \forall l \in \{0, \dots, q\}, k(q-l) + \sum_{j=1}^{l} n_k \geq \sum_{i=1}^{k} m_i$
+
+From the same steps in the previous problem done backwards, we have:
+
+$\forall k \in \{0, \dots, p\}, \forall l \in \{0, \dots, q\}, cap(A,B) \geq v(f) = \sum_{i=1}^{p} m_i$
+
+Since every cut has $cap(A,B) \geq \sum_{i=1}^{p} m_i$, we know the minimum capacity cut also has this property.
+
+Thus, every student can be sent and all constraints are satisfied.
