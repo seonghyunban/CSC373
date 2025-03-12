@@ -1,37 +1,39 @@
 \section*{Q4}
 
 \subsection*{(a)}
-Let $a,b$ be nodes such that $e = (a,b)$ and $e' = (b,a)$. let $A$ be the min cut and $B = V \setminus A$
+\begin{center}
+\begin{tikzpicture}[
+  vertex/.style = {shape=circle,draw,minimum size=2.5em, font=\Large},
+  edge/.style = {->,-Latex, thick},
+  ]
 
-We assume the FF algorithm runs, terminates and finds the max-flow/min-cut
+\node[vertex] (s) at (0,0) {$s$};
+\node[vertex] (a) at (3,0) {$a$};
+\node[vertex] (b) at (6,0) {$b$};
+\node[vertex] (t) at (9,0) {$t$};
 
-WTS $\text{FF finds max flow} \implies f(e) = 0 \vee f(e') = 0$
+\draw[edge] (s) -- (a);
+\draw[edge] (b) -- (t);
 
-Consider $A$ and $B$ as a residual graph of some graph. By the claim proven in lectures:
+\draw[edge] (a) to[bend left=20] node[midway, above] {$e$} (b);
+\draw[edge] (b) to[bend left=20] node[midway, below] {$e'$} (a);
 
-All edges leaving $A*$ are saturated and all edges entering $A*$ have zero flow
+\end{tikzpicture}
+\end{center}
 
-\textbf{Case 1 ($a \in A, b \in B$):}
+Let $a,b$ be nodes such that $e = (a,b)$ and $e' = (b,a)$. let $A$ be the min cut and $B = V \setminus A$. We don't put any restrictions on the graph outside of that.
 
-From the claim, we know that $f(e') = 0$
+Suppose there is a maximum flow in which $e$ and $e'$ both have non zero flow: $f(e) > 0 \wedge f(e') > 0$
 
-\textbf{Case 2 ($a,b \in A$):}
+Let $\Delta = min(f(e),f(e'))$ and $g(e)=f(e)-\Delta$ and $g(e')=f(e')-\Delta$
 
-Both nodes are in $A$ and since from the claim, $A$ is maximizing its outgoing flow to $B$, either:
-\begin{enumerate}
-    \item The max flow takes another path and $f(e)=f(e')=0$
-    \item The max flow requires $f(e) <= C(e)$ to be maximized. Here, sending flow through $e'$ is equivalent to reducing flow on $e$. Since we want to maximize $f(e)$, then $f(e')=0$.
-\end{enumerate}
+The net flow remains the same: $g(e)-g(e') = (f(e)-\Delta) - (f(e')-\Delta) = f(e)-f(e')$
 
-\textbf{Case 3 ($a,b \in B$):}
+If $f(e)>f(e')$, then $\Delta=f(e')$, so $g(e)=f(e)-f(e')>0$ and $g(e')=f(e')-f(e')=0$
 
-Both nodes are in $B$ and since from the claim, $B$ is minimizing its outgoing flow to $A$, either:
-\begin{enumerate}
-    \item All other outgoing edges already have zero flow through another path
-    \item Minimizing the outgoing flow requires $f(e')>=0$ to be minimized. So $f(e')=0$
-\end{enumerate}
+If $f(e')>f(e)$, then $\Delta=f(e)$, so $g(e')=f(e')-f(e)>0$ and $g(e)=f(e)-f(e)=0$
 
-In all cases, either $f(e)=0$ or $f(e')=0$
+We have shown that for every maximum flow, there is a corresponding max flow where atleast one of the edges has zero flow.
 
 \subsection*{(b)}
 The algorithm works as follows:
