@@ -1,1 +1,46 @@
 \section*{Q1}
+
+Define \( x_i \) as the finish time (in minutes) of task \( T_i \) relative to time 0, where \( x_i \geq 0 \) for \( i \in \{1, \dots, 8\} \).  
+
+The total time to complete all tasks is:
+\[
+T^* = \max(x_1, x_2, \dots, x_8)
+\]
+Our goal is to minimize \( T^* \).  
+
+We have the following constraints.
+\begin{align*}
+x_1 &\leq x_4 - 7 \\
+x_2 &\leq x_4 - 7 \\
+x_3 &\leq x_5 - 18 \\
+x_4 &\leq x_5 - 15 \\
+x_5 &\leq x_6 - 12 \\
+x_4 &\leq x_7 - 3 \\
+x_6 &\leq x_8 - 14 \\
+x_7 &\leq x_8 - 14
+\end{align*}
+
+Observing that \( T^* = x_8 \), since \( T_8 \) occurs after \( T_6 \), which depends on previous tasks, we reformulate minimizing \( T^* \) as maximizing \( -x_8 \).
+
+Thus, we can formulate the given problem as LP:
+
+$
+\begin{aligned}
+    \textbf{maximize: } & -x_8 \\
+\end{aligned}
+$
+
+$
+\begin{aligned}
+    \textbf{subject to: }
+    & x_1 - x_4 \leq -7 \\
+    & x_2 - x_4 \leq -7 \\
+    & x_3 - x_5 \leq -18 \\
+    & x_4 - x_5 \leq -15 \\
+    & x_5 - x_6 \leq -12 \\
+    & x_4 - x_7 \leq -3 \\
+    & x_6 - x_8 \leq -14 \\
+    & x_7 - x_8 \leq -14 \\
+    & x_1, x_2, \dots, x_8 &\geq 0.
+\end{aligned}
+$
