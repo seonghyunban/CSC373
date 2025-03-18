@@ -1,7 +1,71 @@
 \section*{Q2}
 
-\subsection*{(a)}
+Let:
+\begin{itemize}
+    \item \( I \) be the set of suppliers.
+    \item \( K \) be the set of goods.
+    \item \( J \) be the set of customers.
+\end{itemize}
 
-\subsection*{(b)}
+The profit of selling one unit of good \( k \) produced by supplier \( i \) to customer \( j \) is given by:
 
-\subsection*{(c)}
+\[
+P_{ijk} = |B_{jk} - A_{ik}|
+\]
+
+Define \( x_{ijk} \) as the number of units of good \( k \) produced by supplier \( i \) and sold to customer \( j \).
+
+\section*{(a)}
+
+$
+\begin{aligned}
+    \textbf{maximize: } & \sum_{i \in I} \sum_{j \in J} \sum_{k \in K} x_{ijk} P_{ijk}
+\end{aligned}
+$
+
+$
+\begin{aligned}
+    \textbf{subject to: }
+    & \sum_{j \in J} x_{ijk} \leq S_{ik}, && \forall i \in I, \forall k \in K \\
+    & \sum_{i \in I} x_{ijk} \leq D_{jk}, && \forall j \in J, \forall k \in K \\
+    & x_{ijk} \geq 0, && \forall i \in I, j \in J, k \in K
+\end{aligned}
+$
+
+\section*{(b)}
+
+$
+\begin{aligned}
+    \textbf{maximize: } & \sum_{i \in I} \sum_{j \in J} \sum_{k \in K} x_{ijk} (P_{ijk} - C_{ij})
+\end{aligned}
+$
+
+$
+\begin{aligned}
+    \textbf{subject to: }
+    & \sum_{j \in J} x_{ijk} \leq S_{ik}, && \forall i \in I, \forall k \in K \\
+    & \sum_{i \in I} x_{ijk} \leq D_{jk}, && \forall j \in J, \forall k \in K \\
+    & \sum_{k \in K} x_{ijk} \leq U_{ij}, && \forall i \in I, \forall j \in J \\
+    & x_{ijk} \geq 0, && \forall i \in I, j \in J, k \in K
+\end{aligned}
+$
+
+\newpage
+
+\section*{(c)}
+
+$
+\begin{aligned}
+    \textbf{maximize: } & \sum_{i \in I} \sum_{j \in J} \sum_{k \in K} x_{ijk} (P_{ijk} - C_{ij})
+\end{aligned}
+$
+
+$
+\begin{aligned}
+    \textbf{subject to: }
+    & \sum_{j \in J} x_{ijk} \leq S_{ik}, && \forall i \in I, \forall k \in K \\
+    & \sum_{i \in I} x_{ijk} \leq D_{jk}, && \forall j \in J, \forall k \in K \\
+    & \sum_{k \in K} x_{ijk} W_k \leq U_{ij}, && \forall i \in I, \forall j \in J \\
+    & x_{ijk} \geq 0, && \forall i \in I, j \in J, k \in K
+\end{aligned}
+$
