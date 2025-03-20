@@ -1,7 +1,78 @@
 \section*{Q4}
 
+
 \subsection*{(a)}
+Let \( Q \) be the \textsc{Nearly-SAT} problem.
+
+Given an instance of \( Q \), \( q = (\mathcal{F}) \), where 
+\[
+\mathcal{F} = (x_1, \dots, x_n, C_1, \dots, C_m)
+\]
+which consists of \( n \) variables and \( m \) clauses.
+
+A ``yes'' instance of \( Q \) is \( q_{yes} = (\mathcal{F}) \) where:
+\[
+\sum_{i=1}^{m} \mathbb{I}(C_i \text{ evaluates to true}) = m - 1.
+\]
+Let one such \( q_{yes} \) be the certificate \( c \).
+
+The verifier \( B(q, c) \) consists of checking whether 
+\[
+\sum_{i=1}^{m} \mathbb{I}(C_i \text{ evaluates to true}) = m - 1,
+\]
+which takes polynomial time in \( O(mn) \), since each clause check takes at most \( O(n) \) time.
+
+Thus, \( Q \in NP \).
 
 \subsection*{(b)}
+To construct \( \mathcal{F}' \), introduce two new clauses \( C_{m+1}, C_{m+2} \) into \( \mathcal{F}' \) such that they satisfy the required property.
+
+\begin{enumerate}
+    \item[(1)] If the number of satisfiable clauses in \( \mathcal{F} \) is \( m \), then assign:
+    \[
+    C_{m+1} = \text{True}, \quad C_{m+2} = \text{False}
+    \]
+    without loss of generality.
+    
+    \item[(2)] If the number of satisfiable clauses in \( \mathcal{F} \) is \( m - 1 \), then:
+    \[
+    \neg (C_{m+1} \land C_{m+2}).
+    \]
+\end{enumerate}
+
+Thus, the number of satisfiable clauses in \( \mathcal{F}' \) is exactly \( m + 1 \) if and only if the number of satisfiable clauses in \( \mathcal{F} \) is \( m \).
+
+Introduce a new variable \( x_{m+1} \), and let:
+\[
+C_{m+1} = x_{m+1}, \quad C_{m+2} = \neg x_{m+1}.
+\]
+
+Then conditions (1) and (2) are satisfied. Define:
+\[
+\mathcal{F}' = (x_1', \dots, x_{m+1}', C_1', \dots, C_m', C_{m+1}', C_{m+2}').
+\]
+
+Where $x_i' = x_i$ for all $i \leq n$, and $C_i' = C_i$ for all $i \leq m$.
 
 \subsection*{(c)}
+Let \( R \) be the \textsc{Nearly-SAT} problem.
+
+Given an instance \( r = (\mathcal{F}) \), construct \( \mathcal{F}' \) as in part (b).
+
+Then, since $\mathbb{I}(C_{m+1} \lor C_{m+2})$ is always 1, we have:
+
+\begin{equation}
+    \begin{split}
+        R(\mathcal{F}) &\iff \sum_{i=1}^{m} \mathbb{I}(C_i \text{ is satisfied}) = m \\
+        &\iff \sum_{i=1}^{m} \mathbb{I}(C_i' \text{ is satisfied}) = m \\
+        &\iff \sum_{i=1}^{m} \mathbb{I}(C_i' \text{ is satisfied}) + \mathbb{I}(C_{m+1}' \lor C_{m+2}') = m + 1 \\
+        &\iff \sum_{i=1}^{m+2} \mathbb{I}(C_i' \text{ is satisfied}) = m + 1 \\
+        &\iff Q(\mathcal{F}').
+    \end{split}
+\end{equation}
+
+Thus, \( Q \) is NP-hard.
+
+\(\square\)
+
+\end{document}
