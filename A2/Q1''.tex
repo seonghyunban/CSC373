@@ -1,0 +1,82 @@
+\section*{Q1}
+
+\subsection*{(a)}
+
+The dynamic programming algorithm outputs the maximum total length 
+of the non-intersecting chords bewteen points i, j in $[1, 2, ..., n]$
+where i <= j, by storing the 2d array C of size n by n. 
+C[i,j] = maximum total length of the non-intersecting chords using the points $[i , ... , j]$.
+
+
+\subsection*{(b)}
+
+Suppose that the length between point i and j is $L[i,j]$, which is already computed and accessible in O(1) time.
+Define OPT(i,j) as the maximum total length of the non-intersecting chords bewteen points in $[i, i+1, ..., j-1, j]$.
+
+\begin{equation}
+    \begin{split}
+        \B{OPT}(i, j) = \begin{cases}
+                        L[i, j] & \dots \text{if } i \geq j - 1\\
+                    \max(\substack{\B{OPT}(i + 1, j), \\
+                                   L[i, j] + \B{OPT}(i + 1, j - 1), \\
+                                   \max\limits_{k \in \{i + 1, ... j - 1\}} L[i,k] + \B{OPT}(i + 1, k - 1) + \B{OPT}(k + 1, j)}) & \dots \text{if } i < j - 1
+                    \end{cases}
+    \end{split}
+\end{equation}
+
+where $i < j$.
+
+This works because if $i \geq j - 1$ then due to the constraint $i \leq j$
+$i = j$ or $i = j - 1$. In that case the optimal soultion is $L[i, j] = 0$ in the former case and simply $L[i,j]$ trivially in the latter case.
+
+If $i < j - 1$, it means that there exists at least one point $k$ between i and j.
+
+It is either that the optimal soultion has a chord connecting i, or not.
+If there is no chord connecting i, the solution is same as optimal solution using points from i + 1 to j.
+If there is a chord connecting i, then it is either connected to j or some point k in the middle, where $k \neq j$.
+If the chord connects to j, then the optimal solution is the chord (i,j) plus the optimal soultion using only the points from i + 1 to j - 1.
+If the chord connects to k, then the optimal solution is the chord (i, k) plus optimal solution to the points $[i + 1, ... k - 1]$ and potimal solution to the points $[k + 1, ... ,j]$
+All these if procedure is captured by max function which outputs the maximum length among all cases above, which by definition gives optimal solution.
+
+
+
+\subsection*{(c)}
+
+Using bottom-up approach, we iterate over $j \in [1, ... n]$, and inside that iteration, we iterate over $i \in [j, ... ,1]$ (descending order)
+we set $OPT(i,j) = L[i,j]$ if $i \geq j - 1$, and compute the max value according to the bellman equation is otherwise.
+
+
+\subsection*{(d)}
+
+\B{Space Complexity:}
+We store a table $OPT(i,j)$ for $1 \le i \le j \le n$. This is on the order of $\frac{n(n+1)}{2}$ entries, i.e.\ $O(n^2)$.
+
+\B{Time Complexity:}
+We fill each entry $OPT(i,j)$ once. In the worst case, we do a loop over all $k$ from $i+1$ to $j-1$, which is $O(n)$ work per state. Since there are $O(n^2)$ states, the total time is $O(n^3)$. We assume $L[i,j]$ is retrievable in $O(1)$ time.
+
+
+\subsection*{(e)}
+
+Create an additional 2d array S, where $S[i,j]$ = optimal solution using points $[i, ... ,j]$.
+
+Define, \\
+$P_{ij} = C[i + 1, j]$,\\ 
+$J_{ij} = L[i,j] + C[i+1, j-1]$, and \\
+$K_{ij} =  \max\limits_{k \in \{i + 1, ... j - 1\}} L[i,k] + C[i + 1, k - 1] + C[k + 1, j]$\\
+
+Right after calculating $OPT(i,j)$, compute $S[i,j]$ as follows. (Assumed that at every inner iteration, the inner point k that maximizes the expression in the bellman equation is accessible.)
+
+\begin{equation}
+    \begin{split}
+        \B{S}[i, j] = \begin{cases}
+                        \varnothing & \dots \text{if } i \geq j\\
+                        \{(i,j)\} & \dots \text{if } i = j - 1\\
+                        S[i+1,j] & \dots \text{if } \max (P_{ij}, J_{ij}, K_{ij}) = P_{ij} \\
+                        \{(i,j)\} \cup S[i+1, j-1] & \dots \text{if } \max (P_{ij}, J_{ij}, K_{ij}) = J_{ij} \\
+                        \{(i,k)\} \cup S[i+1, k-1] \cup S[k+1, j] & \dots \text{if } \max (P_{ij}, J_{ij}, K_{ij}) = K_{ij}
+                    \end{cases}
+    \end{split}
+\end{equation}
+
+
+The final solution should be $S[1, n]$
