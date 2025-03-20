@@ -2,4 +2,76 @@
 
 \subsection*{(a)}
 
+$\mathbf{Q \in NP:}$
+
+Let Q be the \textsc{Even-Subset-Sum} problem.\\
+Given an instance of Q, $q = (S, k)$, 
+where \( S \) is a set of even positive integers and a target sum \( k \in \ZZ \), 
+a solution is a subset \( S' \subseteq S \) whose elements sums to $k$.\\
+Let a solution to an instance of $Q$ be the certificate, $c$. 
+Let $n = |q|$ and $m = |c|$. It is clear that $m \in O(n)$.\\
+
+Verification B(q,c) consists of checking if it sum of all element in $S'$ equals \( k \), which takes at most \( O(n) \) time. Thus, \textsc{Even-Subset-Sum} is in NP.\\
+
+$\mathbf{Q \in NP-hard:}$
+
+Let P be the \textsc{Subset-Sum} problem.
+Given an instance of P, $p = (A, t)$, 
+where \( A \) is a set of positive integers and a target sum \( t \in ZZ\), 
+
+construct \( (S, k) \) where:
+\[
+S = \{ 2a \mid a \in A \} \text{, and } k = 2t \]
+Every element in \( S \) is even, and we set the new target to \( k = 2t \).
+Doubling each element takes \( O(n) \) time, and setting \( k \to 2t \) is \( O(1) \), making the reduction a polynomial transformation.
+
+Then, 
+\begin{equation}
+    \begin{split}
+        P(A, t) \text{ is yes} &\iff \exists A' \subseteq A \text{ s.t. } \sum_{a \in A'} a = t \\
+        &\iff \exists A' \subseteq A \text{ s.t. } \sum_{a \in A'} 2a = 2t \\
+        &\iff \exists S' \subseteq S \text{ s.t. } \sum_{s \in S'} s = k \\
+        &\iff \textsc{Q}(S, k) \text{ is yes}
+    \end{split}
+\end{equation}
+
+Since  is in NP and NP-hard, it is NP-complete. \(\square\)
+
+\newpage
 \subsection*{(b)}
+
+\(\mathbf{Q \in NP:}\)
+
+Let \( Q \) be the \textsc{Non-Empty Subset-Sum} problem.\\
+Given an instance of \( Q \), \( q = (S) \), 
+where \( S \) is a set of integers, a solution is a subset \( S' \subseteq S \) whose elements sum to \( 0 \).\\
+Let a solution to an instance of \( Q \) be the certificate, \( c = S' \).\\
+
+Verification \( B(q,c) \) consists of checking if the sum of all elements in \( S' \) equals \( 0 \), which takes at most \( O(n) \) time. Thus, \textsc{Non-Empty Subset-Sum} is in NP.\\
+
+\(\mathbf{Q \in NP-hard:}\)
+
+Let \( R \) be the \textsc{Subset-Sum} problem.\\
+Given an instance of \( R \), \( r = (A, t) \), 
+where \( A \) is a set of positive integers and a target sum \( t \in \mathbb{Z} \), construct \( S \) where:
+
+\[
+S = A \cup \{-t\}
+\]
+
+This transformation takes polynomial time.\\
+
+Then,
+
+\begin{equation}
+    \begin{split}
+        R(A, t) \text{ is yes} &\iff \exists A' \subseteq A \text{ s.t. } \sum_{a \in A'} a = t \\
+        &\iff \exists A' \subseteq A \text{ s.t. } \sum_{a \in A'} a + (-t) = 0 \\
+        &\iff \exists S' \subseteq S \text{ s.t. } \sum_{s \in S'} s = 0 \\
+        &\iff Q(S) \text{ is yes}
+    \end{split}
+\end{equation}
+
+Since \( Q \) is in NP and NP-hard, it is NP-complete. \(\square\)
+
+\end{document}
