@@ -65,11 +65,16 @@ Then,
 
 \begin{equation}
     \begin{split}
-        R(A, t) \text{ is yes} &\iff \exists A' \subseteq A \text{ s.t. } \sum_{a \in A'} a = t \\
+        R(A, t) \text{ is yes} & \iff \exists A' \subseteq A \text{ s.t. } \sum_{a \in A'} a = t \\
         &\iff \exists A' \subseteq A \text{ s.t. } \sum_{a \in A'} a + (-t) = 0 \\
         &\iff \exists S' \subseteq S \text{ s.t. } \sum_{s \in S'} s = 0 \\
-        &\iff Q(S) \text{ is yes}
+        &\iff Q(S) \text{ is yes}\\
     \end{split}
 \end{equation}
+
+The backward implication from the 4th and 3rd term holds because
+Since $-t$ must be in S', or else by definition of S and A, the subset $S'$ will be comprised of positive integers
+which cannot be summed to 0.
+
 
 Since \( Q \) is in NP and NP-hard, it is NP-complete. \(\square\)
