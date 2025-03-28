@@ -1,0 +1,46 @@
+\section*{Q1}
+
+
+\subsection*{(a)}
+
+Suppose we start from a maximal assignment $M'$, and try to construct a new assignment $M$ with more groups. This is always possible by breaking all existing groups in $M'$ and forming new groups from scratch.
+
+Since $M'$ is maximal, any new group we form in $M$ must overlap with some group in $M'$ — otherwise, that group could have been added to $M'$ without breaking existing groups, contradicting maximality.
+
+Furthermore, each group in $M'$ can contribute to at most 3 groups in $M$, because forming more than 3 groups overlapping with the same group in $M'$ would force overlap between groups in $M$, violating disjointness.
+
+Thus, for any maximal assignment $M$, we must have:
+\[
+|M| \leq 3|M'|.
+\]
+
+\subsection*{(b)}
+
+Define $N(v)$ as the set of neighbors of $v$ in $G$.
+
+\begin{verbatim}
+Algorithm GreedyMaximalAssignment(G = (V, E)):
+    M ← {}
+    While V is not empty:
+        let v be a vertex in V
+        grouped ← False
+        for each u in the intersection of N(v) and V:
+            if not grouped:
+            for each w inthe intersection of N(u), N(v) and V:
+                    Add {u, v, w} to M
+                    Remove {u, v, w} from V
+                    grouped ← True
+        if not grouped:
+            V ← V - {v}
+    return M
+\end{verbatim}
+
+At the end, $M$ is maximal because we cannot insert any new group of three compatible students (i.e., a 3-clique) into the assignment.
+
+Let $M^*$ be an optimal (maximum) assignment. By part~(a), we have:
+\[
+|M| \ge \tfrac{1}{3} |M^*|,
+\]
+so $M$ is a 3-approximation.
+
+In the worst case (dense graphs), This algorithm runtime is $O(n^3)$.
