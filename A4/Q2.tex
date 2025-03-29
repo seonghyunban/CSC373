@@ -1,71 +1,79 @@
 \section*{Q2}
 
-Let:
-\begin{itemize}
-    \item \( I \) be the set of suppliers.
-    \item \( K \) be the set of goods.
-    \item \( J \) be the set of customers.
-\end{itemize}
-
-The profit of selling one unit of good \( k \) produced by supplier \( i \) to customer \( j \) is given by:
-
-\[
-P_{ijk} = |B_{jk} - A_{ik}|
-\]
-
-Define \( x_{ijk} \) as the number of units of good \( k \) produced by supplier \( i \) and sold to customer \( j \).
-
 \subsection*{(a)}
 
-$
-\begin{aligned}
-    \textbf{maximize: } & \sum_{i \in I} \sum_{j \in J} \sum_{k \in K} x_{ijk} P_{ijk}
-\end{aligned}
-$
+\begin{verbatim}
 
-$
-\begin{aligned}
-    \textbf{subject to: }
-    & \sum_{j \in J} x_{ijk} \leq S_{ik}, && \forall i \in I, \forall k \in K \\
-    & \sum_{i \in I} x_{ijk} \leq D_{jk}, && \forall j \in J, \forall k \in K \\
-    & x_{ijk} \geq 0, && \forall i \in I, j \in J, k \in K
-\end{aligned}
-$
+MinimizeSumFinishTime(J):
 
-\subsection*{(b)}
+    J = list of jobs [(s, p, rem, k) for i in 1, ... , n] sorted by release time s.
+    # For each tuple in J, k is the index and rem is the remaining time for the job.
+    
+    P = priority queue ordered by remaining time (rem)
+    i = 0                
+    t = 0                
+    sum_fin = 0
+    order = []
 
-$
-\begin{aligned}
-    \textbf{maximize: } & \sum_{i \in I} \sum_{j \in J} \sum_{k \in K} x_{ijk} (P_{ijk} - C_{ij})
-\end{aligned}
-$
-
-$
-\begin{aligned}
-    \textbf{subject to: }
-    & \sum_{j \in J} x_{ijk} \leq S_{ik}, && \forall i \in I, \forall k \in K \\
-    & \sum_{i \in I} x_{ijk} \leq D_{jk}, && \forall j \in J, \forall k \in K \\
-    & \sum_{k \in K} x_{ijk} \leq U_{ij}, && \forall i \in I, \forall j \in J \\
-    & x_{ijk} \geq 0, && \forall i \in I, j \in J, k \in K
-\end{aligned}
-$
+    while i < len(J) or not P.is_empty():
+        
+        # Enqueue all jobs starting before or at t
+        while i < len(J) and J[i].s <= t:
+            P.enqueue(J[i])
+            i += 1
+    
+        # If no jobs are available yet, skip to next start time
+        if P is empty:
+            t = J[i].s
+            continue
+    
+        # Get job with shortest remaining time
+        curr = P.dequeue()
+    
+        # Determine available time until next release
+        if i < len(J):
+            available = J[i].s - t
+        else:
+            available = infinty
+    
+        run_time = min(curr.rem, available)
+        curr.rem -= run_time
+        t += run_time
+    
+        if curr.rem == 0:
+            sum_finish += t
+            order.append(curr.k)
+        else:
+            P.enqueue(curr)
+    
+    return sum_finish, order
+    \end{verbatim}
 
 \newpage
 
-\subsection*{(c)}
+\subsection*{(b)}
 
-$
-\begin{aligned}
-    \textbf{maximize: } & \sum_{i \in I} \sum_{j \in J} \sum_{k \in K} x_{ijk} (P_{ijk} - C_{ij})
-\end{aligned}
-$
+\begin{verbatim}
 
-$
-\begin{aligned}
-    \textbf{subject to: }
-    & \sum_{j \in J} x_{ijk} \leq S_{ik}, && \forall i \in I, \forall k \in K \\
-    & \sum_{i \in I} x_{ijk} \leq D_{jk}, && \forall j \in J, \forall k \in K \\
-    & \sum_{k \in K} x_{ijk} W_k \leq U_{ij}, && \forall i \in I, \forall j \in J \\
-    & x_{ijk} \geq 0, && \forall i \in I, j \in J, k \in K
-\end{aligned}
-$
+ApproximateMinimizeSumFinishTime(J):
+
+    _, order = MinimizeSumFinishTime(J)
+
+    J = list of jobs [(s, p, rem, k) for i in 1, ... , n] sorted by release time s.
+    J = reorder J according to order
+
+    t = 0
+    sum_fin = 0
+
+    for each job in J:
+        if job.s > t:
+            t = job.s
+        t += job.p
+        sum_fin += t
+
+    return sum_fin
+\end{verbatim}
+
+\textbf{Justification}:
+...
+    
