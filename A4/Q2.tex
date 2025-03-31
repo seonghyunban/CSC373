@@ -74,6 +74,53 @@ ApproximateMinimizeSumFinishTime(J):
     return sum_fin
 \end{verbatim}
 
-\textbf{Justification}:
-...
+
+\textbf{Claim.}
+ This schedule is a 2-approximation.
+
+\vspace{0.5em}
+\textbf{Proof.}
+
+Define:
+\begin{itemize}
+    \item $F_j^{\text{SRPT}}$ = finish time of job $j$ in the shortest remaining processing time schedule,
+    \item $F_j^{\text{NEW}}$ = finish time of job $j$ in the nonpreemptive schedule that orders jobs by increasing $F_j^{\text{SRPT}}$,
+    \item $B_j^{\text{NEW}}$ = total busy (processing) time of the machine on jobs $1$ to $j$ in nonpreemptive algorithm,
+    \item $I_j^{\text{NEW}}$ = total idle time before finishing job $j$ in nonpreemptive algorithm.
+\end{itemize}
+
+Call the nonpreemptive algorithm as NEW.
+
+We decompose:
+\[
+F_j^{\text{NEW}} = B_j^{\text{NEW}} + I_j^{\text{NEW}}.
+\]
+
+Since $B_j^{\text{NEW}} = \sum_{i=1}^j p_i$, and SRPT finishes jobs $1$ through $j$ by time $F_j^{\text{SRPT}}$, we have trivially:
+\[
+B_j^{\text{NEW}} \le B_j^{\text{SRPT}} \le F_j^{\text{SRPT}}.
+\]
+
+Idle time in NEW occurs only if a job $i$ is scheduled but has not yet been released at the time it is ready to be started. Let $F_0^{\text{NEW}} := 0$, then:
+\[
+I_j^{\text{NEW}} = \sum_{i=1}^{j} (s_i - F_{i-1}^{\text{NEW}}) \cdot \mathbf{I}[s_i > F_{i-1}^{\text{NEW}}].
+\]
+
+Using the fact that $F_{i-1}^{\text{NEW}} \ge F_{i-1}^{\text{SRPT}}$ for all $i$ (since SRPT is optimal per job):
+\[
+I_j^{\text{NEW}} \le \sum_{i=1}^{j} (s_i - F_{i-1}^{\text{SRPT}}) \cdot \mathbf{I}[s_i > F_{i-1}^{\text{SRPT}}] = I_j^{\text{SRPT}}.
+\]
+
+Finally, since $I_j^{\text{SRPT}} = F_j^{\text{SRPT}} - B_j^{\text{SRPT}} \le F_j^{\text{SRPT}}$, we conclude:
+\[
+I_j^{\text{NEW}} \le F_j^{\text{SRPT}}.
+\]
+
+Combining the inequalities:
+\[
+F_j^{\text{NEW}} = B_j^{\text{NEW}} + I_j^{\text{NEW}} \le F_j^{\text{SRPT}} + F_j^{\text{SRPT}} = 2 F_j^{\text{SRPT}}.
+\]
+
+\hfill$\blacksquare$
+
     
